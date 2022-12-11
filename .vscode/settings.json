@@ -35,6 +35,7 @@
   ],
   "files.associations": {
     "random": "cpp",
-    "ostream": "cpp"
+    "ostream": "cpp",
+    "new": "cpp"
   }
 }
