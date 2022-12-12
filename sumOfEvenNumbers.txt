@@ -1,0 +1,58 @@
+Function SumOfN cần 2 arguments: i và n
++n là số các số chẵn đầu tiên ta phải tính tổng của chúng
++i là số integer hiện tại đang được xét
+
+Nếu i là số lẻ ----> bỏ qua(skip) i, xét i tới số integer tiếp the
+và return ra tổng của n số chẵn cần tính 
+===> return sumOfN(i+1,n)
+
+
+Nếu i là số chẵn ---> cần add vào result và tiến hành tính tổng
+của (n-1) số chắn tiếp theo
+====> return sumOfN(i+1, n-1)
+
+The base case: nếu n = 0 ===> cần phải tính tổng của 0 số chẵn
+đầu tiên ==> return 0
+
+Ví du:
+cần tính tổng của 5 số chẵn đầu tiên:
+Cần tính: 0 + 2 + 4 + 6 + 8
+function sumOfN sẽ được gọi như sau
+sumOfN(0, 5)
+sumOfN(1, 4)
+sumOfN(2, 4)
+sumOfN(3, 3)
+sumOfN(4, 3)
+sumOfN(5, 2)
+sumOfN(6, 2)
+sumOfN(7, 1)
+sumOfN(8, 1)
+sumOfN(9, 0) ==> stop vì n = 0 
+
+Ta thấy function được gọi n*2-1 lần và cost cho mỗi lần gọi là
+cố định "c" (vì function sumOfN() chỉ check điều kiện n = 0 hay 
+không để return 0 và điều kiện i % 2 = 0 để return(hay gọi) tới
+function sumOfN() với các parameters tương ứng được pass vào)
+
+=> cost cho mỗi lần gọi là const
+
+=> Time = (2n-1) * c = O(n)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

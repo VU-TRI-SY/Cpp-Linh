@@ -10,7 +10,7 @@ bool isPrime(int n)
         return true;
 
     //if n > 2 ---> check [2, n-1], if exists i (n % i = 0) ---> n is not a prime number   
-    for (int i = 2; i <= n-1; i++) //brute force - term
+    for (int i = 2; i <= sqrt(n); i++) //brute force - term
     {
         if (n % i == 0)
             return false;
