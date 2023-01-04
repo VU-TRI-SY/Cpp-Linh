@@ -1,0 +1,26 @@
+**Tree
+
+1)Node: contains data and links to the nodes that is the children of this Node
+2)Edges: the link between any two nodes
+3)Root: the top most node of a tree (the most important node)
+4)Height = Depth
+
+5)Internal Nodes: the nodes that has at least one child (parent node)
+6)External Nodes/leaf Nodes: the node that has no child (child node)
+
+**Tree traversal
+Traversing a tree: preorder, inorder, postorder
+
+1) preorder
+-Print the parent node(current node)
+-Print the left most child
+-Print the remaining children of this node(print the right child/print the right sub tree)
+2) inorder
+-Print the left most child
+-Print the parent node
+-Print the remaining children of this node from left to right
+3) postorder
+-Print the left most child
+-Print the remaining children from left to right of this node
+-Print the parent node
+
