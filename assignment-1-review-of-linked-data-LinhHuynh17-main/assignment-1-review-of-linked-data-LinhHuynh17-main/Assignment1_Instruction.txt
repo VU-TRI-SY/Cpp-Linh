@@ -1,0 +1,102 @@
+To review some of the work you've done in 142/143/342 just to ensure that we are all on the same page.  
+We will implement a program that converts a simplified version of HTML into a graph structure and allows 
+you to traverse it with a simplistic local web browser.
+
+Required Methods
+
+Constructor() - Creates an empty webpage graph.
+
+Destructor() - Cleans up any dynamically allocated memory and (possibly, depending on your implementation) fixes any broken links.
+
+AddFiles(vector<string> inputFilenames) - This method adds each of these webpages listed in the vector to the graph.  
+If the file cannot be found, output to the screen "File [inputFilename] Not Found" where you replace [inputFilename] with the
+filename that wasn't found.  You may assume inputFilenames are unique.
+
+RemoveFiles(vector<string> inputFilenames) - This method removes any files listed and their associated links.   
+If the file cannot be found, output to the screen "File [inputFilename] Not Found" where you replace [inputFilename] 
+with the filename that wasn't found.
+
+InteractiveMode(string start) - Enters the system into interactive mode where the user can traverse all of the webpages
+ connected to the one that they start at.  If  start cannot be found, then output "File [start] Not Found" where you
+  replace [start] with the filename that wasn't found. On each webpage, you must display the title of the page 
+  (you must overload the <<operator to display the title of a WebpageNode) and give the user the Main Menu which provides the option to 
+1)  Display the HTML Body   ---   (note that when you display the HTML body, you will only display the plain text -- this
+ means you should remove all the links from the <Body> section before printing.
+
+2)  List the links 
+
+3)  Go back to the previous page
+
+4)  Exit Interactive Mode
+
+If the user chooses 2, you should list all of the links in the form
+
+1)  LinkA
+
+2)  LinkB
+
+3)  LinkC
+
+...
+
+X)  Return to Menu
+
+Note that when you list the links, you will just list the name that is inside the <a></a> tag, so <a href="first.html">first</a> would 
+show up here as "first"
+
+When they choose a link, you will then load that page and return to the main menu.
+
+Note:  inputs.annotated contains what each input that is piped into your program is supposed to do.  This file should only be used as
+ a reference and not in your program.
+
+ 
+
+ 
+
+You will submit the following:
+
+1)  WebpageDriver.cpp
+
+2)  test.sh (If my test.sh doesn't match the filenames you used, you must edit it so this builds and runs correctly on the linux lab)
+
+3)  inputs
+
+4)  All of the included html files
+
+5)  Any code that you write
+
+You should download the zip file after you submit it and ensure that you can run it on the Linux lab.
+
+Grading --
+
+To receive credit, your code must compile on the linux lab, it must not segfault or run indefinitely.  If you cannot get 
+your full program working, please comment out the parts that break your code before submitting and note what you did in a
+ readme.txt file. Do not leave debug statements in your code.
+
+Constructor/Destructor -- 10 points 
+AddFiles -- 30 points (this includes parsing of the html)
+
+RemoveFiles -- 10 points
+InteractiveMode -- 25 points
+
+Readable coding style and reasonable comments -- 10 points
+
+Proper use of git -- Frequent commits any time you complete new functionality or fix a bug along with understandable 
+commit messages. -- 15
+
+----------------
+
+ 
+
+Note on HTML --
+
+I am using a stripped down HTML format.   What you see in the html files is all you will ever see for this assignment. 
+ Every file starts with a <html> tag and ends with an </html> tag.  All tags will be lowercase.  After the first html tag, 
+ you will always have a <head> tag and inside the <head> tag you will always have a <title> tag.  The title can be any arbitrary 
+ string, but will always be alphanumeric or whitespace characters (no need to worry about special characters).  
+ The title runs until you hit </title>.   The next nonwhitespace characters will be the </head> closing tag and then the 
+ start of the <body> tag.  Inside the body, you will have alphanumeric and whitespace.  The only tags you will see are the hyperlink tags. 
+  The will consist of <a href=" followed by the unique id of the file, followed by ">.   Then there is the text to display for the link, 
+  again, only alphanumeric and whitespace, and then the closing tag </a>.  There can be 0 or more <a> tags in the body.   
+  The body is done when you reach the </body> tag.  This will then be followed by the </html> closing tag.  
+  You do not need to worry about edge cases and errors.
