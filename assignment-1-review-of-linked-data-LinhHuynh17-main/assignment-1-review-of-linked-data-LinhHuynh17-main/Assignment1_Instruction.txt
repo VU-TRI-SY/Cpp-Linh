@@ -17,9 +17,9 @@ If the file cannot be found, output to the screen "File [inputFilename] Not Foun
 with the filename that wasn't found.
 
 InteractiveMode(string start) - Enters the system into interactive mode where the user can traverse all of the webpages
- connected to the one that they start at.  If  start cannot be found, then output "File [start] Not Found" where you
-  replace [start] with the filename that wasn't found. On each webpage, you must display the title of the page 
-  (you must overload the <<operator to display the title of a WebpageNode) and give the user the Main Menu which provides the option to 
+connected to the one that they start at.  If  start cannot be found, then output "File [start] Not Found" where you
+replace [start] with the filename that wasn't found. On each webpage, you must display the title of the page 
+(you must overload the <<operator to display the title of a WebpageNode) and give the user the Main Menu which provides the option to 
 1)  Display the HTML Body   ---   (note that when you display the HTML body, you will only display the plain text -- this
  means you should remove all the links from the <Body> section before printing.
 
@@ -49,9 +49,6 @@ When they choose a link, you will then load that page and return to the main men
 Note:  inputs.annotated contains what each input that is piped into your program is supposed to do.  This file should only be used as
  a reference and not in your program.
 
- 
-
- 
 
 You will submit the following:
 
@@ -86,7 +83,6 @@ commit messages. -- 15
 
 ----------------
 
- 
 
 Note on HTML --
 
