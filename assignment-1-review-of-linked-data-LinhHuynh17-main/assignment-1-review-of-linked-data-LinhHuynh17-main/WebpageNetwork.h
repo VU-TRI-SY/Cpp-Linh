@@ -9,8 +9,8 @@ class WebpageNetwork
 public:
     WebpageNetwork()
     {
-        graph_ = vector<Node *>();
-        history_ = stack<Node *>();
+        // graph_ = vector<Node *>();
+        // history_ = stack<Node *>();
         currentpage_ = nullptr;
     }
 
@@ -19,13 +19,15 @@ public:
         for (int i = 0; i < graph_.size(); i++)
         {
             delete graph_[i];
+            graph_[i] = nullptr;
         }
 
-        // while(!history_.empty()){
-        //     Node* tp = history_.top();
-        //     delete tp;
-        //     history_.pop();
-        // }
+        while(!history_.empty()){
+            Node* tp = history_.top();
+            delete tp;
+            tp = nullptr;
+            history_.pop();
+        }
     }
 
     void AddFiles(vector<string> input_file_names)
@@ -71,6 +73,8 @@ public:
             {
                 if (graph_[j]->getFilename() == input_file_names[i])
                 {
+                    delete graph_[j];
+                    graph_[j] = nullptr;
                     graph_.erase(graph_.begin() + j);
                     return true;
                 }
@@ -97,7 +101,7 @@ public:
         }else{
             int choice;
             while(1){
-                cout << "\nWelcome to: " <<  *currentpage_ << endl << endl;
+                cout << "\n--------- " <<  *currentpage_ << " ---------" << endl << endl;
                 cout << "1) Display the HTML Body" << endl;
                 cout << "2) List the links" << endl;
                 cout << "3) Go back to the previous page" << endl;
@@ -266,13 +270,13 @@ private:
         }
         else
         {
-            cout << "No more pages to go back to." << endl;
+            cout << "\nNo more pages to go back to.\n" << endl;
         }
     }
 
     void exitProgram()
     {
-        cout << "Exiting..." << endl;
+        cout << "\nExiting...\n" << endl;
         exit(0);
     }
 
