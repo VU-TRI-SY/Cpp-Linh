@@ -1,54 +1,83 @@
 #ifndef NODE_H_
 #define NODE_H_
-#include <vector>
-#include <string>
+#include <bits/stdc++.h>
 using namespace std;
 class Node{
-    public:
- 
-        Node (string file_name, string title, string body);
-        //DESCRIPTION: Node constructor which initializes the private variables of the node
-        //PRE-CONDITION: valid file, title, and body name
-        //POST-CONDITION: Private file, title, and body name variables are initialized
- 
-        ~Node();
-        //DESCRIPTION: Node destructor would delete the link nodes and free up memory
-        //PRE-CONDITION: There is memory to free in the links vector
-        //POST-CONDITION: No memory leaks and link nodes are deleted
-   
-        bool AddLink (Node* link);
-        //DESCRIPTION: Adds node link to links vector. Returns true if link was added successfully.
-        //PRE-CONDITION: Has a valid node to add
-        //POST-CONDITION: Adds node to the links vector
- 
-        bool RemoveLink (Node* link);
-        //DESCRIPTION: Removes link of node requested. Returns true if remove was successful.
-        //PRE-CONDITION: Node exists inside links vector
-        //POST-CONDITION: the Node which is asked to be deleted is removed from the links vector
- 
-        string get_title() const;
-        //DESCRIPTION: Getter which gets the private variable "title_"
-        //POST-CONDITION: Returns a string which is the title of the node
- 
-        string get_name() const;
-        //DESCRIPTION: Getter which gets the private variable "file_name_"
-        //POST-CONDITION: Returns a string which is the file name of the node
- 
-        string get_body() const;
-        //DESCRIPTION: Getter which gets the private variable "body_"
-        //POST-CONDITION: Returns a string which is the body of the node
- 
-        vector<Node*> get_links() const;
-        //DESCRIPTION: vector which holds a pointer to the nodes which link to the current node
- 
     private:
-        string file_name_;
-        string title_;
+        string filename_;
         string body_;
- 
-        vector <Node*> links;
-        //add,remove
-        //DESCRIPTION: vector of nodes with links to the current node
+        string title_;
+        vector <string> links_;
+    public:
+        Node(string filename){
+            filename_ = filename;
+        }
+
+        bool addLink(string link){
+            for (int i = 0; i < links_.size(); i++){
+                if (links_[i] == link){
+                    return false;
+                }
+            }
+            links_.push_back(link);
+            return true;
+        }
+
+        void removeLink(string link){
+            for (int i = 0; i < links_.size(); i++){
+                if (links_[i] == link){
+                    links_.erase(links_.begin() + i);
+                }
+            }
+        }
+
+        void printLinks(){
+            for (int i = 0; i < links_.size(); i++){
+                cout << i+1 << ") " << links_[i] << endl;
+            }
+        }
+
+        void setBody(string body){
+            body_ = body;
+        }
+
+        void setTitle(string title){
+            title_ = title;
+        }
+
+        void setLinks(vector<string> links){
+            links_ = links;
+        }
+
+        string getFilename() const{
+            return filename_;
+        }
+
+        string getBody() const{
+            return body_;
+        }
+
+        string getTitle() const{
+            return title_;
+        }
+
+        vector<string> getLinks() const{
+            return links_;
+        }
+
+        bool operator==(const Node& other) const{
+            return filename_ == other.filename_;
+        }
+
+        bool operator!=(const Node& other) const{
+            return filename_ != other.filename_;
+        }
+
+        friend ostream& operator << (ostream& out, const Node& node){
+            out << node.title_;
+            return out;
+        }
+
 };
 #endif
  

@@ -23,7 +23,7 @@ int main () {
 
 	// test adding functionality and Interactive Mode
 	web.AddFiles(files);
-	web.InteractiveMode("fourth.html");
+	web.InteractiveMode("first.html");
 
 	// test Remove functionality
 	web.RemoveFiles(toRemove);

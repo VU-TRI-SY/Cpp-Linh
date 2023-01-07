@@ -1,93 +1,309 @@
 #ifndef WEBPAGENETWORK_H_
 #define WEBPAGENETWORK_H_
+#include <bits/stdc++.h>
 #include "Node.h"
-#include <stack>
-#include <vector>
- 
-class WebpageNetwork{
-    public:
- 
-    WebpageNetwork();
-    //DESCRIPTION: Constructor which initializes WebpageNetwork object and allocates resources
-    //POST-CONDITION: WebPageNetwork object is created and private variables are initialized
- 
-    ~WebpageNetwork();
-    //DESCRIPTION: Destructor gets rid of any dynamically allocated nodes inside the "graph_" and "history_" variables of the program
-    //PRE-CONDITION: There are dynamically allocated nodes inside the "graph_" and "history_" variables
-    //POST-CONDITION: The successful clearing of space and no leaking memory
- 
-    void AddFiles(vector<string> input_file_names);
-    /* DESCRIPTION: adds each of these webpages listed in the vector to the graph. If the file cannot be found, output to the screen
-    "File [inputFilename] Not Found" where you replace [inputFilename] with the filename that wasn't found. */
- 
-    //PRE-CONDITIONS: Needs the parameter to include a non-empty vector with valid files names
-    //POST-CONDITIONS: Nodes for each of the files are created and are added to the graph vector
- 
-    bool RemoveFiles(vector<string> input_file_names); //removes a file from graph ie. deleting node
-    /*DESCRIPTION: This method removes any files listed and their associated links. If the file cannot be found, output to the screen
-    "File [inputFilename] Not Found" where you replace [inputFilename] with the filename that wasn't found.*/
- 
-    //PRE-CONDITIONS: Needs the parameter to include a non-empty vector with valid files names
-    //POST-CONDITIONS: Nodes for file names listed are removed along with their link nodes
- 
-    void InteractiveMode(string start);
-    /*DESCRIPTION: Enters the system into interactive mode where the user can traverse all of the webpages connected to the one that they
-    start at.  If  start cannot be found, then output "File [start] Not Found" where you replace [start] with the filename that wasn't found. Provides other options as well
-    such as allowing the user to go back to the previous page as well as seeing the body of the node.*/
- 
-    //PRE-CONDITION: a valid start point of a file which hasn't been deleted yet/exists within the vector
-    //POST-CONDITION: Able to exit interactive mode without errors or program crashing and with no memory leaks
- 
-    friend ostream& operator<<(ostream& out, const Node& node);
-    //DESCRIPTION: displays the title of the page
-    //PRE-CONDITION: The parameter is a valid node
-    //POST-CONDITION: The node's title is printed out
+#include "Utils.h"
 
-    private:
-    string ParseBody (string file_name);
-    //DESCRIPTION: Searches for the body of the HTML page
-    //PRE-CONDITION: The file exists and contains a body
-    //POST-CONDITION: The body of the HTML page is returned as a string
+class WebpageNetwork
+{
+public:
+    WebpageNetwork()
+    {
+        graph_ = vector<Node *>();
+        history_ = stack<Node *>();
+        currentpage_ = nullptr;
+    }
 
-    vector<string> ParseLinks (string file_name);
-    //DESCRIPTION: Searches for the links in the HTML page
-    //PRE-CONDITION: The file exists and contains links
-    //POST-CONDITION: The links in the HTML page are returned as a vector of string(s)
+    ~WebpageNetwork()
+    {
+        for (int i = 0; i < graph_.size(); i++)
+        {
+            delete graph_[i];
+        }
 
-    string ParseTitle(string file_name);
-    //DESCRIPTION: Searched for the title of the HTML page
-    //PRE-CONDITION: The file exists and contains a title
-    //POST-CONDITION: The title of the HTML page is returned as a string
- 
-    void DisplayBody(const Node* node); //fetch the string of the body of the node
-    //DESCRIPTION: Display the body of the HTML page.
-    //PRE-CONDITION: anything in the body but not empty.
-    //POST-CONDITION: print out the content in the body.
- 
-    void ListLinks(const Node* node);
-    //DESCRIPTION: Display a list of links in the HTML page.
-    //PRE-CONDITION: the links exist in the HTML page
-    //POST-CONDITION: print out the list of links to other HTML pages
+        // while(!history_.empty()){
+        //     Node* tp = history_.top();
+        //     delete tp;
+        //     history_.pop();
+        // }
+    }
 
-    void GoBack();
-    //DESCRIPTION: Go back to a previous action, like the previous HTML page.
-    //PRE-CONDITION: the history has to have at least two nodes.
-    //POST-CONDITION: Traverse to the last node has been visited.
- 
-    void Exit();
-    //DESCRIPTION: Leave the node and exit the current HTML page.
-    //PRE-CONDITION: The history has to have at least one node.
-    //POST-CONDITION: Program stops running
+    void AddFiles(vector<string> input_file_names)
+    {
+        for (int i = 0; i < input_file_names.size(); i++)
+        {
+            ifstream file(input_file_names[i]);
+            if (file.is_open())
+            {
+                string filename, body, title;
+                vector<string> links;
+                Node *node = new Node(input_file_names[i]);
+                while(!file.eof()){
+                    char c;
+                    file >> std::noskipws >> c;
+                    if(c == '<'){
+                        file >> std::noskipws >> c;
+                        if(c == 't'){ //<title>
+                            getTitle(file, title);
+                            node->setTitle(title);
+                        }else if(c == 'b'){ //<a>
+                            getBody(file, body, links);
+                            node->setBody(body);
+                        }
+                    }
+                }
+                node->setLinks(links);
+                graph_.push_back(node);
+                file.close();
+            }
+            else
+            {
+                cout << "File " << input_file_names[i] << " Not Found" << endl;
+            }
+        }
+    }
 
-    vector<Node*> graph_;
-    //DESCRIPTION: This vector contains pointers to a webpage node. Meant to represent a graph.
+    bool RemoveFiles(vector<string> input_file_names)
+    {
+        for (int i = 0; i < input_file_names.size(); i++)
+        {
+            for (int j = 0; j < graph_.size(); j++)
+            {
+                if (graph_[j]->getFilename() == input_file_names[i])
+                {
+                    graph_.erase(graph_.begin() + j);
+                    return true;
+                }
+            }
+            cout << "File " << input_file_names[i] << " Not Found" << endl;
+        }
+        return false;
+    }
 
-    stack<Node*> history_;
-    //DESCRIPTION: This stack contains the history of the pages the user visited. Meant to make it easier to go back a page(s).
+    void InteractiveMode(string start)
+    {
+        bool found = false;
+        for(int i = 0; i < graph_.size(); i++){
+            if(graph_[i]->getFilename() == start){
+                currentpage_ = graph_[i];
+                history_.push(currentpage_);
+                found = true;
+                break;
+            }
+        }
+        if(!found){
+            cout << "File " << start << " Not Found" << endl;
+            return;
+        }else{
+            int choice;
+            while(1){
+                cout << "\nWelcome to: " <<  *currentpage_ << endl << endl;
+                cout << "1) Display the HTML Body" << endl;
+                cout << "2) List the links" << endl;
+                cout << "3) Go back to the previous page" << endl;
+                cout << "4) Exit Interactive Mode" << endl;
+                cout << "Enter your choice: ";
+                cin >> choice;
+                switch(choice){
+                    case 1:
+                        cout << "Body of the page: " << endl << endl;
+                        cout << currentpage_->getBody() << endl << endl;
+                        break;
+                    case 2:
+                        cout << "Links in the page: " << endl << endl;
+                        displayLinks();
+
+                        break;
+                    case 3:
+                        goBack();
+                        break;
+                    case 4:
+                        exitProgram();
+                        break;
+                    default:
+                        cout << "Invalid Choice" << endl;
+                }
+            }
+        }
+    }
+
+private:
+    istream &getLink(istream &is, string &link)
+    {
+        string line = "";
+
+        while (!is.eof())
+        {
+            char c;
+            is >> std::noskipws >> c;
+            if (c == '\"')
+            {
+                while (!is.eof())
+                {
+                    is >> std::noskipws >> c;
+                    if (c == '\"')
+                    {
+                        break;
+                    }
+                    line += c;
+                }
+            }
+            if (c == '>')
+            {
+                break;
+            }
+        }
+
+        link = trim(line);
+        return is;
+    }
+
+    istream &getBody(istream &is, string &body, vector<string> &links)
+    {
+        string link;
+        while (!is.eof())
+        {
+            char c;
+            is >> std::noskipws >> c;
+            if (c == '>')
+                break;
+        } // read opening tag of body
+
+        string line = "";
+        while (!is.eof())
+        {
+            char c;
+            is >> std::noskipws >> c;
+            if (c == '<')
+            {
+                is >> std::noskipws >> c;
+                if (c == 'a') //<a href="link">
+                {
+                    getLink(is, link);
+                    links.push_back(link);
+                }
+                else
+                {
+                    if (c == '/')
+                    {
+                        is >> std::noskipws >> c;
+                        if (c == 'a')
+                        {                             //</a>
+                            is >> std::noskipws >> c; // read >
+                        }
+                        else
+                        {
+                            if (c == 'b')
+                            { //</body>
+                                while (!is.eof())
+                                {
+                                    is >> std::noskipws >> c;
+                                    if (c == '>')
+                                    {
+                                        body = trim(line);
+                                        return is;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                line += c;
+            }
+        }
+        return is;
+    }
+
+    istream &getTitle(istream &is, string &title)
+    {
+        while (!is.eof())
+        {
+            char c;
+            is >> std::noskipws >> c;
+            if (c == '>')
+                break;
+        } // read opening tag of title
+
+        string line = "";
+        while (!is.eof())
+        {
+            char c;
+            is >> std::noskipws >> c;
+
+            if (c == '<')
+                break;
+            line += c;
+        } // read title
+        while (!is.eof())
+        {
+            char c;
+            is >> std::noskipws >> c;
+            if (c == '>')
+                break;
+        } // read closing tag of title
+
+        title = trim(line);
+        // title = line;
+        return is;
+    }
+
+    void goBack()
+    {
+        if (history_.size() > 1)
+        {
+            Node*tp1 = history_.top();
+            history_.pop();
+            Node*tp2 = history_.top();
+            history_.pop();
+            if(tp1->getFilename() != tp2->getFilename()){
+                currentpage_ = tp2;
+                InteractiveMode(currentpage_->getFilename());
+            }
+        }
+        else
+        {
+            cout << "No more pages to go back to." << endl;
+        }
+    }
+
+    void exitProgram()
+    {
+        cout << "Exiting..." << endl;
+        exit(0);
+    }
+
+    void displayLinks(){
+        char c;
+        currentpage_->printLinks();
+        cout << "X) Return to Menu" << endl;
+        cout << "Enter your choice: ";
+        cin >> c;
+        if(c == 'X' || c == 'x'){
+            history_.pop();
+            InteractiveMode(currentpage_->getFilename());
+        }else{
+            int choice = c - '0';
+            if(choice > 0 && choice <= currentpage_->getLinks().size()){
+                for(int i = 0; i < graph_.size(); i++){
+                    if(graph_[i]->getFilename() == currentpage_->getLinks()[choice - 1]){
+                        currentpage_ = graph_[i];
+                        InteractiveMode(currentpage_->getFilename());
+                        history_.push(currentpage_);
+                        break;
+                    }
+                }
+            }else{
+                cout << "Invalid Choice!" << endl;
+            }
+        }
+
+    }
+    vector<Node *> graph_;
+    Node *currentpage_;
+    stack<Node *> history_;
 };
 #endif
- 
- 
-
-
-
