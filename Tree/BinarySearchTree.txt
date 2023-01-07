@@ -1,0 +1,6 @@
+BST is a binary tree that satisfy the condition:
+1: All nodes of left subtree are less than the root node
+2: All nodes of right subtree are more than the root node
+3: Both subtrees of each node are also BSTs
+
+(left child < parent < right child)

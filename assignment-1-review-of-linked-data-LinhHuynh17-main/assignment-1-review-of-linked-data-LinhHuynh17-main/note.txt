@@ -1,0 +1,3 @@
+Khi gọi tới method web.AddFiles(files) thì sẽ add từng file trong vector 'files', với mỗi file được add thì ta
+phải open file ---> read file ---> extract filename, title, body, links nằm ở trong file html đó và tạo ra
+một Node tương ứng với thông tin đó
